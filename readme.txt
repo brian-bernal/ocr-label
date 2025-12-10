@@ -3,7 +3,7 @@ Setup:
 2. An environment variable, EXTERNAL_API_KEY, is required. One can be obtained for free at https://ocr.space
 You can make a .env file or create env vars yourself:
 PORT=3000
-OCR_API_KEY=yourapikeyhere
+EXTERNAL_API_KEY=yourapikeyhere
 3. npm install express multer axios form-data dotenv
 4. node server.js
 5. open browser to localhost
