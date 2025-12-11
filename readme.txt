@@ -1,12 +1,11 @@
 Setup:
-1. index.html and server.js are in the same directory.
-2. An environment variable, EXTERNAL_API_KEY, is required. One can be obtained for free at https://ocr.space
-You can make a .env file or create env vars yourself:
+1. An environment variable, EXTERNAL_API_KEY, is required. An API key can be obtained for free at https://ocr.space
+You can make a .env file which dotenv will pull in or you create env vars yourself on your system:
 PORT=3000
 EXTERNAL_API_KEY=yourapikeyhere
-3. npm install express multer axios form-data dotenv
-4. node server.js
-5. open browser to localhost
+2. Install the dependencies via: npm install express multer axios form-data dotenv (or: npm install (if you want to use package.json))
+4. Use node to start: node server.js
+5. open browser to localhost (or whatever port you decided but 80 is the default)
 
 Ideas for improvement:
 1. It makes way more sense to read the image and then auto populate the fields and ask the user to verify instead of having the user enter everything and then verify. This introduces additional steps, but it's much more user friendly; nobody likes having to fill out forms.
@@ -29,4 +28,5 @@ Considered and explored multiple OCR solutions Tesseract, PaddleOCR, Google Visi
 3. Uses regex to match pattern for alcohol content. Starts at a new word, and ensures some suffix comes after the number while ignoring spaces. abv, percent, or % is allowed. Numbers could appear anywhere on the label, so need to make sure this number is associated with the abv.
 4. Initially, looked at using OpenSource PaddleOCR, however it was controlled by Chinese company and introduces risk, specifically with dependencies and docker images hosted on Chinese servers. It's an unnecessary vector of risk but could be mitigated with security scans and pulling from GitHub but requires close watch on packages during build process. When tested on local machine, processing time and accuracy were unfit for usage.
 5. PyTesseract is old and was unable to detect the alcohol content with an example image found on the TTB website. Required a series of color manipulation and upscaling to read labels, which could greatly misrepresent the original label (if a human has difficulty seeing it but an AI can see it easily, then the purpose of the label is moot).
+
 6. Even though in the code we know the exact shape of the response json or that the frontend is checking if a file has been selected or that the filetype uploaded is restricted, we still check these on the backend for defensive coding. APIs could change, frontend could change, someone could bypass the frontend. Plus it doesn't add a whole lot of bloat.
