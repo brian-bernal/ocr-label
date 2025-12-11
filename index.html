@@ -1,478 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Upload Product</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Upload Product</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Upload Product Label</h1>
 
-  <style>
-    :root {
-      --max-width: 520px;
-      --gap: 12px;
-      --muted: #666;
-      --ok-bg: #e6ffed;
-      --ok-border: #b7f0c8;
-      --err-bg: #ffecec;
-      --err-border: #ffbcbc;
-      --info-bg: #f6f8fb;
-      --info-border: #e6e9ef;
-    }
+      <form
+        id="productForm"
+        action="/upload"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        <label>
+          Brand Name
+          <input id="brandName" name="brandName" type="text" required />
+        </label>
 
-    body {
-      font-family: system-ui, Arial, sans-serif;
-      padding: 24px;
-      line-height: 1.3;
-    }
+        <label>
+          Product Class/Type
+          <input id="productClass" name="productClass" type="text" required />
+        </label>
 
-    main {
-      max-width: var(--max-width);
-      margin: 0 auto;
-    }
+        <label>
+          Alcohol Content (%)
+          <input
+            id="alcoholContent"
+            name="alcoholContent"
+            type="number"
+            step="0.1"
+            min="0"
+            required
+          />
+        </label>
 
-    form {
-      display: grid;
-      gap: var(--gap);
-    }
+        <input
+          id="imageInput"
+          name="imageFile"
+          type="file"
+          accept=".jpg,.jpeg,.png,.gif,.tif,.bmp"
+          style="display: none"
+          aria-hidden="true"
+        />
 
-    label {
-      display: flex;
-      flex-direction: column;
-      font-weight: 600;
-      gap: 6px;
-      font-size: 0.95rem;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    .fake-file-btn {
-      padding: 8px 10px;
-      border-radius: 6px;
-      border: 1px solid #ddd;
-      font-size: 1rem;
-    }
-
-    .row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    /* file name truncation */
-    #fileName {
-      font-size: 0.95rem;
-      color: var(--muted);
-      max-width: 260px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    button {
-      padding: 8px 12px;
-      cursor: pointer;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      background: white;
-    }
-
-    button[disabled] {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    #result {
-      margin-top: 12px;
-      max-width: var(--max-width);
-    }
-
-    .status-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px;
-      border: 1px solid #eee;
-      border-radius: 6px;
-      margin-top: 6px;
-      font-size: 0.95rem;
-    }
-
-    .preview {
-      margin-top: 8px;
-      display: grid;
-      grid-template-columns: 84px 1fr;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .preview img {
-      width: 84px;
-      height: 84px;
-      object-fit: cover;
-      border-radius: 6px;
-      border: 1px solid #e6e6e6;
-    }
-
-    /* small helper note */
-    .note {
-      margin-top: 10px;
-      font-size: 0.93rem;
-      color: var(--muted);
-    }
-
-    /* accessible visually-hidden helper */
-    .sr-only {
-      position: absolute;
-      left: -10000px;
-      top: auto;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-    }
-  </style>
-</head>
-<body>
-  <main>
-    <h1 style="font-size:1.25rem;margin-bottom:8px;">Upload Product Label</h1>
-
-    <form id="productForm" action="/upload" method="post" enctype="multipart/form-data">
-      <label>
-        Brand Name
-        <input id="brandName" name="brandName" type="text" required />
-      </label>
-
-      <label>
-        Product Class/Type
-        <input id="productClass" name="productClass" type="text" required />
-      </label>
-
-      <label>
-        Alcohol Content (%)
-        <input id="alcoholContent" name="alcoholContent" type="number" step="0.1" min="0" required />
-      </label>
-
-      <!-- hidden file input (kept inside the form so it will be submitted) -->
-      <input
-        id="imageInput"
-        name="imageFile"
-        type="file"
-        accept=".jpg,.jpeg,.png,.gif,.tif,.bmp"
-        style="display:none"
-        aria-hidden="true"
-      />
-
-      <div class="row" aria-hidden="false">
-        <button type="button" id="chooseImage" class="fake-file-btn" aria-controls="fileName">Choose Image</button>
-        <span id="fileName">No file chosen</span>
-        <span style="margin-left:auto"><button type="button" id="clearImageBtn" title="Clear selected image">Clear</button></span>
-      </div>
-
-      <div id="previewArea" class="preview" aria-live="polite" style="display:none">
-        <img id="thumb" alt="Selected image preview" src="" />
-        <div>
-          <div id="previewInfo"></div>
-          <div class="note">Accepted: JPEG, PNG, GIF, BMP, TIF. Max 1 MB.</div>
+        <div class="row" aria-hidden="false">
+          <button
+            type="button"
+            id="chooseImage"
+            class="file-input-btn"
+            aria-controls="fileName"
+          >
+            Choose Image
+          </button>
+          <span id="fileName">No file chosen</span>
+          <span style="margin-left: auto"
+            ><button
+              type="button"
+              id="clearImageBtn"
+              title="Clear selected image"
+            >
+              Clear
+            </button></span
+          >
         </div>
-      </div>
 
-      <div class="row">
-        <button type="submit" id="submitBtn">Submit</button>
-      </div>
-    </form>
+        <div
+          id="previewArea"
+          class="preview"
+          aria-live="polite"
+          style="display: none"
+        >
+          <img id="thumb" alt="Selected image preview" src="" />
+          <div>
+            <div id="previewInfo"></div>
+            <div class="note">
+              Accepted: JPEG, PNG, GIF, BMP, TIF. Max 1 MB.
+            </div>
+          </div>
+        </div>
 
-    <div id="result" aria-live="polite"></div>
-  </main>
+        <div class="row">
+          <button type="submit" id="submitBtn">Submit</button>
+        </div>
+      </form>
 
-  <script>
-    (function () {
-      'use strict';
+      <div id="result" aria-live="polite"></div>
+    </main>
 
-      // Config
-      const MAX_SIZE_BYTES = 1 * 1024 * 1024; // 1MB allowed by API
-      const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
-
-      // Elements
-      const chooseBtn = document.getElementById('chooseImage');
-      const clearBtn = document.getElementById('clearImageBtn');
-      const fileInput = document.getElementById('imageInput');
-      const fileNameSpan = document.getElementById('fileName');
-      const form = document.getElementById('productForm');
-      const result = document.getElementById('result');
-      const submitBtn = document.getElementById('submitBtn');
-      const thumb = document.getElementById('thumb');
-      const previewArea = document.getElementById('previewArea');
-      const previewInfo = document.getElementById('previewInfo');
-
-      // Utility: set result area with styled message
-      function showMessage(text, kind = 'info') {
-        result.innerHTML = '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        div.style.padding = '10px';
-        div.style.borderRadius = '6px';
-        div.style.fontSize = '0.98rem';
-        if (kind === 'success') {
-          div.style.background = 'var(--ok-bg)';
-          div.style.border = '1px solid var(--ok-border)';
-        } else if (kind === 'error') {
-          div.style.background = 'var(--err-bg)';
-          div.style.border = '1px solid var(--err-border)';
-        } else {
-          div.style.background = 'var(--info-bg)';
-          div.style.border = '1px solid var(--info-border)';
-        }
-        result.appendChild(div);
-      }
-
-      // Utility: make a status row (label + check/X)
-      function statusRow(label, value, ok) {
-        const el = document.createElement('div');
-        el.className = 'status-row';
-        const left = document.createElement('div');
-        left.textContent = label + (value ? `: ${value}` : '');
-        const right = document.createElement('div');
-        right.setAttribute('aria-hidden', 'true');
-        right.style.fontSize = '1.1rem';
-        right.textContent = ok ? '✅' : '❌';
-        el.appendChild(left);
-        el.appendChild(right);
-        return el;
-      }
-
-      // Cleanly enable/disable form UI during upload
-      function setUploading(isUploading) {
-        chooseBtn.disabled = isUploading;
-        clearBtn.disabled = isUploading;
-        submitBtn.disabled = isUploading;
-        // optional: visually indicate
-        submitBtn.textContent = isUploading ? 'Uploading...' : 'Submit';
-      }
-
-      // Update UI with selected file (name + preview)
-      function updateSelectedFileUI(file) {
-        if (!file) {
-          fileNameSpan.textContent = 'No file chosen';
-          previewArea.style.display = 'none';
-          thumb.src = '';
-          previewInfo.textContent = '';
-          return;
-        }
-
-        const prettySizeKB = Math.round(file.size / 1024);
-        fileNameSpan.textContent = `${file.name} (${prettySizeKB} KB)`;
-
-        // Create preview
-        const reader = new FileReader();
-        reader.onload = () => {
-          thumb.src = reader.result;
-          previewInfo.textContent = `${file.type || ''} • ${prettySizeKB} KB`;
-          previewArea.style.display = 'grid';
-        };
-        reader.readAsDataURL(file);
-      }
-
-      // Validate selected file
-      function validateFile(file) {
-        if (!file) return 'No file selected.';
-        if (file.size === 0) return 'Selected file is empty.';
-        if (file.size > MAX_SIZE_BYTES) return `File is too large (max ${Math.round(MAX_SIZE_BYTES / 1024 / 1024)} MB).`;
-        // accept unknown image types but warn; prefer to enforce known types
-        if (!ACCEPTED_TYPES.includes(file.type)) {
-          return 'Unsupported file type. Use JPEG, PNG, or GIF.';
-        }
-        return null;
-      }
-
-      // Extract a tolerant "foundSet" / "missingSet" from server response
-      function parseServerLabelChecks(resp) {
-        // Common server shapes:
-        // 1) { labelChecks: { found: ['brandName'], missing: ['alcoholContent'] }, success: true }
-        // 2) { fields: { brandName: { found: true }, alcoholContent: { found: false } } }
-        // 3) { found: ['brandName'], missing: [] }
-        const found = new Set();
-        const missing = new Set();
-
-        try {
-          if (resp && typeof resp === 'object') {
-            if (resp.labelChecks) {
-              (resp.labelChecks.found || []).forEach(k => found.add(String(k)));
-              (resp.labelChecks.missing || []).forEach(k => missing.add(String(k)));
-            } else if (resp.fields && typeof resp.fields === 'object') {
-              Object.keys(resp.fields).forEach(k => {
-                const val = resp.fields[k];
-                // consider truthy "found" or boolean true/false
-                if (val && (val.found === true || val.detected === true || val.match)) {
-                  found.add(k);
-                } else {
-                  missing.add(k);
-                }
-              });
-            } else {
-              // fallback: arrays at root
-              (resp.found || []).forEach(k => found.add(String(k)));
-              (resp.missing || []).forEach(k => missing.add(String(k)));
-            }
-          }
-        } catch (e) {
-          // swallow and return empty sets
-        }
-
-        return { foundSet: found, missingSet: missing };
-      }
-
-      // Render verification results using tolerant parsing
-      function renderVerification(respJson, formValues) {
-        // keep existing top-level messages (do not clear showMessage output here)
-        // produce rows for fields
-        const container = document.createElement('div');
-
-        const { foundSet, missingSet } = parseServerLabelChecks(respJson);
-
-        // fallback: if no info from server, treat fields as missing but still show server reason
-        const fields = ['brandName', 'productClass', 'alcoholContent'];
-        const labels = { brandName: 'Brand Name', productClass: 'Product Class', alcoholContent: 'Alcohol Content' };
-
-        // If server explicitly indicates timeout or failure, show that at top
-        if (respJson && respJson.reason) {
-          const reasonText = String(respJson.reason);
-          if (reasonText.toLowerCase().includes('timed out')) {
-            showMessage('Image processing timed out. Please try again or use a clearer photo.', 'error');
-          } else if (respJson.success === false) {
-            showMessage('Label verification failed: ' + reasonText, 'error');
-          } else {
-            // info note from server
-            showMessage(reasonText, 'info');
-          }
-        } else {
-          // If no reason and some fields were found, show success/incomplete message
-          const allFound = fields.every(k => foundSet.has(k) && !missingSet.has(k));
-          if (foundSet.size > 0 && allFound) {
-            showMessage('Label verification successful — all submitted fields were found.', 'success');
-          } else if (missingSet.size > 0) {
-            showMessage('Label verification incomplete — some fields were not found.', 'error');
-          } else {
-            showMessage('Unable to verify label fields.', 'error');
-          }
-        }
-
-        // Append per-field rows
-        for (const key of fields) {
-          const val = formValues[key] || '';
-          // treat as OK if listed as found OR server reports no missingSet but includes the label in some text match
-          const ok = (foundSet.has(key) && !missingSet.has(key));
-          container.appendChild(statusRow(labels[key], val, ok));
-        }
-
-        // If server returned additional note and success false, show short note (no raw JSON)
-        if (respJson && respJson.success === false && respJson.reason) {
-          const note = document.createElement('div');
-          note.style.marginTop = '10px';
-          note.style.fontSize = '0.95rem';
-          note.textContent = respJson.reason;
-          container.appendChild(note);
-        }
-
-        result.appendChild(container);
-      }
-
-      // Event handlers
-      chooseBtn.addEventListener('click', () => fileInput.click());
-
-      clearBtn.addEventListener('click', () => {
-        fileInput.value = '';
-        updateSelectedFileUI(null);
-      });
-
-      fileInput.addEventListener('change', () => {
-        const f = fileInput.files && fileInput.files[0];
-        updateSelectedFileUI(f);
-      });
-
-      // Submit handler
-      form.addEventListener('submit', async (ev) => {
-  // Let the browser show native tooltips for invalid fields first.
-  // reportValidity() will show native UI and return false if invalid.
-  if (!form.reportValidity()) {
-    // do not preventDefault here — the browser already displayed the tooltip.
-    // Return without submitting.
-    return;
-  }
-
-  // At this point the form is considered valid by the browser, so we
-  // prevent default and run the custom upload logic.
-  ev.preventDefault();
-  result.innerHTML = '';
-
-  const fd = new FormData(form);
-
-  // Capture values for display
-  const formValues = {
-    brandName: String(fd.get('brandName') || '').trim(),
-    productClass: String(fd.get('productClass') || '').trim(),
-    alcoholContent: String(fd.get('alcoholContent') || '').trim(),
-  };
-
-  const file = fileInput.files && fileInput.files[0];
-  const validationError = validateFile(file);
-  if (validationError) {
-    showMessage(validationError, 'error');
-    return;
-  }
-
-  showMessage('Uploading image and verifying label — uploading...', 'info');
-  setUploading(true);
-
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 90_000); // 90s
-
-  try {
-    const res = await fetch(form.action || '/upload', {
-      method: 'POST',
-      body: fd,
-      signal: controller.signal,
-    });
-
-    clearTimeout(timeoutId);
-
-    const text = await res.text();
-    let json = null;
-    try {
-      json = JSON.parse(text);
-    } catch (err) {
-      // If response is not JSON, show a generic error
-      showMessage('Unexpected server response. Please try again.', 'error');
-      return;
-    }
-
-    // Handle any response (success or error) by checking the json object
-    if (json && json.success === false && json.reason) {
-      // Server returned an error with a reason message
-      showMessage(json.reason, 'error');
-    } else if (json && json.success === true) {
-      // Success response — render verification details
-      renderVerification(json, formValues);
-    } else {
-      // Render verification even if success is not explicitly true (for partial verification)
-      renderVerification(json, formValues);
-    }
-  } catch (err) {
-    clearTimeout(timeoutId);
-    if (err && err.name === 'AbortError') {
-      showMessage('Request timed out. Try again or use a smaller/clearer image.', 'error');
-    } else {
-      showMessage('Network error while sending image. Check your connection and try again.', 'error');
-      console.error('Upload error:', err);
-    }
-  } finally {
-    setUploading(false);
-  }
-});
-
-
-      // Initialize UI (if file pre-selected by browser)
-      if (fileInput.files && fileInput.files[0]) {
-        updateSelectedFileUI(fileInput.files[0]);
-      }
-    })();
-  </script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
